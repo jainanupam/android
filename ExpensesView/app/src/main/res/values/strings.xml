@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Expenses View</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="fill_data_title">Enter Expense Data</string>
+    <string name="id">User id</string>
+    <string name="amount">Amount</string>
+    <string name="particulars">Particulars</string>
+    <string name="isGroup">Is it Group expense?</string>
+    <string name="dated">Dated (dd-mm-yyyy)</string>
+    <string name="submit">Submit</string>
+
+</resources>
