@@ -12,4 +12,14 @@
     <string name="dated">Dated (dd-mm-yyyy)</string>
     <string name="submit">Submit</string>
 
+    <!-- Register Activity Strings -->
+    <string name="register_screen_title">Register User</string>
+    <string name="register">Register</string>
+
+    <!-- Login Activity Strings -->
+    <string name="login_screen_title">Login User</string>
+    <string name="login">Login</string>
+
+    <string name="user_name">User Name</string>
+    <string name="password">Password</string>
 </resources>

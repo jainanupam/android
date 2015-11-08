@@ -1,8 +1,9 @@
-package com.coddicted.expensesview;
+package com.coddicted.expensesview.activity;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -10,6 +11,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.coddicted.expensesview.Constants;
+import com.coddicted.expensesview.R;
+import com.coddicted.expensesview.Utility;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -17,33 +21,34 @@ import com.loopj.android.http.RequestParams;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 import cz.msebera.android.httpclient.Header;
 
 
-public class MainActivity extends Activity {
+public class RegisterActivity extends Activity {
 
     // Progress dialog object
     ProgressDialog prgDialog;
-    // userId edit text object
-    EditText userIdET;
-    EditText amountET;
-    EditText particularsET;
-    EditText groupET;
-    EditText datedET;
+    // userName edit text object
+    EditText userName;
+    EditText password;
 
     // TextView object to display error message (if any)
     TextView errorMsg;
 
+    // TAG for the class
+    private static String TAG = "RegisterActivityTAG";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_register);
         // Get all the edit view object instances
-        this.userIdET = (EditText) findViewById(R.id.userid);
-        this.amountET = (EditText) findViewById(R.id.amount);
-        this.particularsET = (EditText) findViewById(R.id.password);
-        this.groupET = (EditText) findViewById(R.id.isgroup);
-        this.datedET = (EditText) findViewById(R.id.dated);
+        this.userName = (EditText) findViewById(R.id.user_name);
+        this.password = (EditText) findViewById(R.id.password);
 
         // Get the Text view object that would be used in case of failure/ errors
         this.errorMsg = (TextView) findViewById(R.id.login_error);
@@ -77,28 +82,32 @@ public class MainActivity extends Activity {
     }
 
     // Custom code for REST Service calling
-    public void submitExpenseData(View view){
+    public void submitRegisterData(View view){
         // Get all the data values input by user
-        String userId = this.userIdET.getText().toString();
-        String amount = this.amountET.getText().toString();
-        String particulars = this.particularsET.getText().toString();
-        String isGroup = this.groupET.getText().toString();
-        String dated = this.datedET.getText().toString();
+        String userName = this.userName.getText().toString();
+        String password = this.password.getText().toString();
+        byte[] passkey = null;
+
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            md.update(password.getBytes(),0, password.length());
+            passkey = md.digest(password.getBytes());
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
+        Log.i(RegisterActivity.TAG, "user name: " + userName);
+        Log.i(RegisterActivity.TAG, "Password : " + password);
+        Log.i(RegisterActivity.TAG, "Encrypted Passkey : " + new BigInteger(1, passkey).toString(16));
 
         // Instantiate HTTP Request param object
         RequestParams params = new RequestParams();
 
-        if(Utility.isNotNull(userId) &&
-                Utility.isNotNull(amount) &&
-                Utility.isNotNull(particulars) &&
-                Utility.isNotNull(isGroup) &&
-                Utility.isNotNull(dated)){
+        if(Utility.isNotNull(userName) &&
+                Utility.isNotNull(password)){
             // Add all the parameters to the HTTP Request param object
-            params.put(Constants.USER_ID, userId);
-            params.put(Constants.AMOUNT, amount);
-            params.put(Constants.PARTICULARS, particulars);
-            params.put(Constants.GROUP, isGroup);
-            params.put(Constants.DATED, dated);
+            params.put(Constants.USER_NAME, userName);
+            params.put(Constants.PASSWORD, new BigInteger(1, passkey).toString(16));
 
             // Invoke the RESTful web service
             invokeWS(params);
@@ -122,7 +131,7 @@ public class MainActivity extends Activity {
         AsyncHttpClient client = new AsyncHttpClient();
 
         // Make RESTful webservice call using AsyncHttpClient object
-        client.get(Constants.ADD_EXPENSE_URL,params ,new AsyncHttpResponseHandler() {
+        client.post(Constants.REGISTER_USER_URL,params ,new AsyncHttpResponseHandler() {
             // When the response returned by REST has Http response code '200'
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] response) {
@@ -133,7 +142,7 @@ public class MainActivity extends Activity {
                     JSONObject obj = new JSONObject(new String(response));
                     // When the JSON response has status boolean value assigned with true
                     if(obj.getBoolean("status")){
-                        Toast.makeText(getApplicationContext(), "Data submitted successfully!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "User Registered successfully!", Toast.LENGTH_LONG).show();
                         // Navigate to Home screen
                         //navigatetoHomeActivity();
                     }
@@ -166,9 +175,9 @@ public class MainActivity extends Activity {
                 // When Http response code other than 404, 500
                 else{
                     Toast.makeText(getApplicationContext(),
-                            "Unexpected Error occcured! [Most common Error: " +
+                            "Unexpected Error occcured while posting! [Most common Error: " +
                                     "Device might not be connected to Internet or " +
-                                    "remote server is not up and running]",
+                                    "remote server is not up and running]" + statusCode,
                             Toast.LENGTH_LONG).show();
                 }
             }

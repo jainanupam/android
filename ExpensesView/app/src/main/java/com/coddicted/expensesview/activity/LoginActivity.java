@@ -1,8 +1,10 @@
-package com.coddicted.expensesview;
+package com.coddicted.expensesview.activity;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -10,6 +12,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.coddicted.expensesview.Constants;
+import com.coddicted.expensesview.MainActivity;
+import com.coddicted.expensesview.R;
+import com.coddicted.expensesview.Utility;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -20,30 +26,29 @@ import org.json.JSONObject;
 import cz.msebera.android.httpclient.Header;
 
 
-public class MainActivity extends Activity {
+public class LoginActivity extends Activity {
 
     // Progress dialog object
     ProgressDialog prgDialog;
-    // userId edit text object
-    EditText userIdET;
-    EditText amountET;
-    EditText particularsET;
-    EditText groupET;
-    EditText datedET;
+    // userName edit text object
+    EditText userName;
+    EditText password;
 
     // TextView object to display error message (if any)
     TextView errorMsg;
 
+    // TAG for the class
+    private static String TAG = "LoginActivityTAG";
+
+    private static final int REGISTER_ACTIVITY_REQUEST_CODE = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_login);
         // Get all the edit view object instances
-        this.userIdET = (EditText) findViewById(R.id.userid);
-        this.amountET = (EditText) findViewById(R.id.amount);
-        this.particularsET = (EditText) findViewById(R.id.password);
-        this.groupET = (EditText) findViewById(R.id.isgroup);
-        this.datedET = (EditText) findViewById(R.id.dated);
+        this.userName = (EditText) findViewById(R.id.user_name);
+        this.password = (EditText) findViewById(R.id.password);
 
         // Get the Text view object that would be used in case of failure/ errors
         this.errorMsg = (TextView) findViewById(R.id.login_error);
@@ -77,36 +82,44 @@ public class MainActivity extends Activity {
     }
 
     // Custom code for REST Service calling
-    public void submitExpenseData(View view){
+    public void loginUser(View view){
         // Get all the data values input by user
-        String userId = this.userIdET.getText().toString();
-        String amount = this.amountET.getText().toString();
-        String particulars = this.particularsET.getText().toString();
-        String isGroup = this.groupET.getText().toString();
-        String dated = this.datedET.getText().toString();
+        String userName = this.userName.getText().toString();
+        String password = this.password.getText().toString();
 
         // Instantiate HTTP Request param object
         RequestParams params = new RequestParams();
 
-        if(Utility.isNotNull(userId) &&
-                Utility.isNotNull(amount) &&
-                Utility.isNotNull(particulars) &&
-                Utility.isNotNull(isGroup) &&
-                Utility.isNotNull(dated)){
+        if(Utility.isNotNull(userName) &&
+                Utility.isNotNull(password)){
             // Add all the parameters to the HTTP Request param object
-            params.put(Constants.USER_ID, userId);
-            params.put(Constants.AMOUNT, amount);
-            params.put(Constants.PARTICULARS, particulars);
-            params.put(Constants.GROUP, isGroup);
-            params.put(Constants.DATED, dated);
+            params.put(Constants.USER_NAME, userName);
+            params.put(Constants.PASSWORD, password);
+
+            Log.i(TAG, "userName : " + userName);
+            Log.i(TAG, "password : " + password);
 
             // Invoke the RESTful web service
-            invokeWS(params);
+            //invokeWS(params);
 
+            // create explicit intent for the main screen activity
+            Intent mainScreenIntent = new Intent(LoginActivity.this, MainActivity.class);
+
+            // call the new activity
+            startActivity(mainScreenIntent);
         } else {
             Toast.makeText(getApplicationContext(), "All fields are mandatory.",
                     Toast.LENGTH_LONG).show();
         }
+    }
+
+    // Start register user activity
+    public void registerUser(){
+        // Create exlicit intent for the register activity
+        Intent registerActivityIntent = new Intent(LoginActivity.this, RegisterActivity.class);
+
+        // Start the register activity
+        startActivityForResult(registerActivityIntent, REGISTER_ACTIVITY_REQUEST_CODE);
     }
 
     /**
@@ -122,7 +135,7 @@ public class MainActivity extends Activity {
         AsyncHttpClient client = new AsyncHttpClient();
 
         // Make RESTful webservice call using AsyncHttpClient object
-        client.get(Constants.ADD_EXPENSE_URL,params ,new AsyncHttpResponseHandler() {
+        client.get(Constants.LOGIN_USER_URL,params ,new AsyncHttpResponseHandler() {
             // When the response returned by REST has Http response code '200'
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] response) {
@@ -173,5 +186,9 @@ public class MainActivity extends Activity {
                 }
             }
         });
+    }
+
+    public void onActivityResult(){
+        //TODO Complete the callback method
     }
 }

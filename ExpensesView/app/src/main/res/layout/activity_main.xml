@@ -52,16 +52,16 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="@string/particulars"
-        android:id="@+id/tv_particulars"
+        android:id="@+id/tv_password"
         android:layout_below="@+id/amount"
         android:layout_alignParentLeft="true" />
 
     <EditText
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/particulars"
+        android:id="@+id/password"
         android:hint="Enter particulars"
-        android:layout_below="@+id/tv_particulars"
+        android:layout_below="@+id/tv_password"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
@@ -70,7 +70,7 @@
         android:layout_height="wrap_content"
         android:text="@string/isGroup"
         android:id="@+id/tv_group"
-        android:layout_below="@+id/particulars"
+        android:layout_below="@+id/password"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
