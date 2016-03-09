@@ -7,18 +7,29 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivityTAG";
 
     Camera cam;
+    TextView btnController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        //Remove notification bar
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
 
+        btnController = (TextView)findViewById(R.id.btnController);
     }
 
     public void toggleFlashlight(View v) throws CameraAccessException {
@@ -35,10 +46,12 @@ public class MainActivity extends AppCompatActivity {
             p.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
             cam.setParameters(p);
             cam.startPreview();
+            btnController.setText(R.string.tap_to_off);
         } else {
             p.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
             cam.setParameters(p);
             cam.stopPreview();
+            btnController.setText(R.string.tap_to_on);
         }
     }
 

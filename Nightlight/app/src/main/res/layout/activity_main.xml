@@ -11,4 +11,12 @@
     android:clickable="true"
     android:onClick="toggleFlashlight">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/tap_to_on"
+        android:id="@+id/btnController"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:textAlignment="center"/>
 </RelativeLayout>
