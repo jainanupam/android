@@ -1,6 +1,7 @@
 package com.coddicted.nightlight;
 
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.hardware.Camera;
 import android.hardware.camera2.CameraAccessException;
 import android.os.Bundle;
@@ -10,6 +11,8 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
@@ -17,7 +20,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivityTAG";
 
     Camera cam;
-    TextView btnController;
+    ImageButton btnController;
+    RelativeLayout relativeLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +33,13 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        btnController = (TextView)findViewById(R.id.btnController);
+        relativeLayout = (RelativeLayout) findViewById(R.id.relLayout);
+        btnController = (ImageButton)findViewById(R.id.btnController);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        //outState.put
     }
 
     public void toggleFlashlight(View v) throws CameraAccessException {
@@ -46,12 +56,17 @@ public class MainActivity extends AppCompatActivity {
             p.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
             cam.setParameters(p);
             cam.startPreview();
-            btnController.setText(R.string.tap_to_off);
+            //btnController.setText(R.string.tap_to_off);
+            btnController.setBackgroundResource(R.drawable.turn_off);
+            //relativeLayout.setBackgroundColor(Color.WHITE);
         } else {
             p.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
             cam.setParameters(p);
             cam.stopPreview();
-            btnController.setText(R.string.tap_to_on);
+            //btnController.setText(R.string.tap_to_on);
+            //relativeLayout.setBackgroundColor(Color.BLACK);
+            btnController.setBackgroundResource(R.drawable.turn_on);
+
         }
     }
 
