@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.coddicted.playandlearn.GameActivity">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/textPartA"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/textView"
+            android:layout_alignEnd="@+id/buttonChoice1"
+            android:text="9"
+            android:textSize="70sp" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="52dp"
+            android:text="x"
+            android:textAllCaps="true"
+            android:textSize="70sp" />
+
+        <TextView
+            android:id="@+id/textPartB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/textView"
+            android:layout_alignParentEnd="true"
+            android:layout_alignStart="@+id/buttonChoice3"
+            android:layout_marginEnd="20dp"
+            android:text="9"
+            android:textSize="70sp" />
+
+        <Button
+            android:id="@+id/buttonChoice1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textView"
+            android:layout_marginEnd="15dp"
+            android:layout_marginTop="61dp"
+            android:layout_toStartOf="@+id/buttonChoice2"
+            android:text="82"
+            android:textSize="40sp" />
+
+        <Button
+            android:id="@+id/buttonChoice2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/buttonChoice1"
+            android:layout_alignBottom="@+id/buttonChoice1"
+            android:layout_centerHorizontal="true"
+            android:text="83"
+            android:textSize="40sp" />
+
+        <Button
+            android:id="@+id/buttonChoice3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/buttonChoice2"
+            android:layout_alignBottom="@+id/buttonChoice2"
+            android:layout_marginStart="15dp"
+            android:layout_toEndOf="@+id/buttonChoice2"
+            android:text="81"
+            android:textSize="40sp" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textView2"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="48dp"
+            android:text="="
+            android:textSize="70sp" />
+
+        <TextView
+            android:id="@+id/textScore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignStart="@+id/textPartA"
+            android:layout_marginBottom="71dp"
+            android:text="Score:999" />
+
+        <TextView
+            android:id="@+id/textLevel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/textScore"
+            android:layout_alignTop="@+id/textScore"
+            android:layout_toEndOf="@+id/buttonChoice2"
+            android:text="Level:4" />
+    </RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>
