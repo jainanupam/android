@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.coddicted.memorygame.GameActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/textScore"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="17dp"
+            android:text="Score: 999"
+            android:textAlignment="center"
+            android:textSize="40sp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:id="@+id/textDifficulty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/textScore"
+            android:layout_marginTop="17dp"
+            android:text="Difficulty: 4"
+            android:textAlignment="center"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/textWatchGo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/textDifficulty"
+            android:layout_marginTop="18dp"
+            android:text="Watch/Go"
+            android:textAlignment="center"
+            android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/button1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textWatchGo"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="25dp"
+            android:text="1" />
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/button1"
+            android:layout_below="@+id/button1"
+            android:layout_marginTop="20dp"
+            android:text="2" />
+
+        <Button
+            android:id="@+id/button3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/button2"
+            android:layout_below="@+id/button2"
+            android:layout_marginTop="17dp"
+            android:text="3" />
+
+        <Button
+            android:id="@+id/button4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/button3"
+            android:layout_below="@+id/button3"
+            android:layout_marginTop="21dp"
+            android:text="4" />
+
+        <Button
+            android:id="@+id/buttonReplay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@+id/button4"
+            android:layout_marginEnd="13dp"
+            android:layout_marginTop="14dp"
+            android:text="Replay"
+            android:textAllCaps="false" />
+    </RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>
