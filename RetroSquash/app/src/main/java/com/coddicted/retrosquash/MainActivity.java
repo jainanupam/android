@@ -198,10 +198,16 @@ public class MainActivity extends Activity {
 
         private void updateCourt() {
             if(racketIsMovingRight){
-                racketPosition.x = racketPosition.x + 10;
+                if ((racketPosition.x + racketWidth / 2) < screenWidth) {
+                    // improvisation on original code
+                    // to stop the racket from moving beyond screen
+                    racketPosition.x = racketPosition.x + 12;
+                }
             }
             if(racketIsMovingLeft){
-                racketPosition.x = racketPosition.x - 10;
+                if ((racketPosition.x - racketWidth / 2) > 0) {
+                    racketPosition.x = racketPosition.x - 12;
+                }
             }
 
             // detect collisions
