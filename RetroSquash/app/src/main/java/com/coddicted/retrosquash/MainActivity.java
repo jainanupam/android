@@ -53,7 +53,7 @@ public class MainActivity extends Activity {
     Point racketPosition;
 
     Point ballPosition;
-    int ballWidth;
+    int ballRadius;
 
     // Ball movement
     boolean ballIsMovingLeft;
@@ -114,10 +114,10 @@ public class MainActivity extends Activity {
         racketWidth = screenWidth / 8;
         racketHeight = 10;
 
-        ballWidth = screenWidth / 35;
+        ballRadius = screenWidth / 35;
         ballPosition = new Point();
         ballPosition.x = screenWidth / 2;
-        ballPosition.y = ballWidth + 1;
+        ballPosition.y = ballRadius + 1;
 
         lives = 3;
 
@@ -227,21 +227,21 @@ public class MainActivity extends Activity {
             // detect collisions
 
             // ball hits the right of screen
-            if(ballPosition.x + ballWidth > screenWidth) {
+            if(ballPosition.x + ballRadius > screenWidth) {
                 ballIsMovingLeft = true;
                 ballIsMovingRight = false;
                 soundPool.play(sample1, 1, 1, 0, 0, 1);
             }
 
             // ball hits the left of screen
-            if(ballPosition.x < 0){
+            if(ballPosition.x - ballRadius <= 0){
                 ballIsMovingLeft = false;
                 ballIsMovingRight = true;
                 soundPool.play(sample1, 1, 1, 0, 0, 1);
             }
 
             // Edge of ball has hit bottom of screen
-            if (ballPosition.y > screenHeight - ballWidth){
+            if (ballPosition.y > screenHeight - ballRadius){
                 // decrease 1 life
                 lives--;
                 if(lives == 0){
@@ -251,22 +251,21 @@ public class MainActivity extends Activity {
                     soundPool.play(sample4, 1, 1, 0, 0, 1);
                 }
                 // send the ball back to top of screen
-                ballPosition.y = 1 + ballWidth;
+                ballPosition.y = 1 + ballRadius;
 
                 //what horizontal direction should we use
                 //for the next falling ball
                 Random randomNumber = new Random();
-                int startX = randomNumber.nextInt(screenWidth - ballWidth) + 1;
-                ballPosition.x = startX + ballWidth;
+                int startX = randomNumber.nextInt(screenWidth - ballRadius) + 1;
+                ballPosition.x = startX + ballRadius;
                 setRandomXDirectionOfBall();
 
             }
 
             // ball hits the top of the screen
-            if (ballPosition.y <= 0){
+            if (ballPosition.y - ballRadius <= 0){
                 ballIsMovingDown = true;
                 ballIsMovingUp = false;
-                ballPosition.y = 1;
                 soundPool.play(sample2, 1, 1, 0, 0, 1);
             }
 
@@ -286,10 +285,10 @@ public class MainActivity extends Activity {
             }
 
             // has ball hit the racket
-            if (ballPosition.y + ballWidth >= (racketPosition.y - racketHeight / 2)) {
+            if (ballPosition.y + ballRadius >= (racketPosition.y - racketHeight / 2)) {
                 int halfRacket = racketWidth / 2;
-                if (ballPosition.x + ballWidth > (racketPosition.x - halfRacket) &&
-                        (ballPosition.x - ballWidth < (racketPosition.x + halfRacket))){
+                if (ballPosition.x + ballRadius > (racketPosition.x - halfRacket) &&
+                        (ballPosition.x - ballRadius < (racketPosition.x + halfRacket))){
                     // rebound the ball vertically and play a sound
                     soundPool.play(sample3, 1, 1, 0, 0, 1);
                     score++;
@@ -330,9 +329,7 @@ public class MainActivity extends Activity {
                         paint);
 
                 // draw the ball
-                canvas.drawRect(ballPosition.x, ballPosition.y,
-                        ballPosition.x + ballWidth, ballPosition.y + ballWidth,
-                        paint);
+                canvas.drawCircle(ballPosition.x, ballPosition.y, ballRadius, paint);
 
                 ourHolder.unlockCanvasAndPost(canvas);
             }
