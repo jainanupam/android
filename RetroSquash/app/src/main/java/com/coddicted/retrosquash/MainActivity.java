@@ -2,6 +2,7 @@ package com.coddicted.retrosquash;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.graphics.Canvas;
@@ -25,6 +26,13 @@ public class MainActivity extends Activity {
 
     Canvas canvas;
     SquashCourtView squashCourtView;
+
+    SharedPreferences preferences;
+    SharedPreferences.Editor editor;
+    String dataName = "RetroSquashData";
+    String stringHiScoreKey = "RetroSquashHiScore";
+    int defaultHiScore = 0;
+    int currentHiScore = 0;
 
     /// Sound variables
     SoundPool soundPool;
@@ -112,6 +120,12 @@ public class MainActivity extends Activity {
         ballPosition.y = ballWidth + 1;
 
         lives = 3;
+
+        preferences = getSharedPreferences(dataName, MODE_PRIVATE);
+        editor = preferences.edit();
+
+        // Load the high score
+        currentHiScore = preferences.getInt(stringHiScoreKey, defaultHiScore);
 
     }
 
@@ -290,6 +304,11 @@ public class MainActivity extends Activity {
                         ballIsMovingRight = false;
                         ballIsMovingLeft = true;
                     }
+                    if (score > currentHiScore){
+                        currentHiScore = score;
+                        editor.putInt(stringHiScoreKey, currentHiScore);
+                        editor.commit();
+                    }
                 }
             }
         }
@@ -300,7 +319,8 @@ public class MainActivity extends Activity {
                 canvas.drawColor(Color.BLACK); // background color
                 paint.setColor(Color.argb(255, 255, 255, 255));
                 paint.setTextSize(45);
-                canvas.drawText("Score:" + score + " Lives:" + lives + " fps:" + fps, 20, 40, paint);
+                canvas.drawText("Score:" + score + " Lives:" + lives +
+                        " High Score:" + currentHiScore + " fps:" + fps, 20, 40, paint);
 
                 // draw the squash racket
                 canvas.drawRect(racketPosition.x - (racketWidth/2), // left
