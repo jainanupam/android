@@ -3,6 +3,7 @@ package com.coddicted.snake;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -22,6 +23,14 @@ public class MainActivity extends Activity {
     Canvas canvas;
     SnakeAnimView snakeAnimView;
 
+    // Variables for saving the High Score
+    SharedPreferences preferences;
+    SharedPreferences.Editor editor;
+    String dataName = "SnakeGameData";
+    String stringHiScoreKey = "SnakeHiScore";
+    int defaultHiScore = 0;
+    int currentHiScore = 0;
+
     // Snake head sprite
     Bitmap headAnimBitmap;
     // Portion of Bitmap to be drawn
@@ -38,7 +47,6 @@ public class MainActivity extends Activity {
     // stats
     long lastFrameTime;
     int fps;
-    int hi;
 
     Intent i;
 
@@ -57,6 +65,7 @@ public class MainActivity extends Activity {
         headAnimBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.head_sprite_sheet);
 
         snakeAnimView = new SnakeAnimView(this);
+        snakeAnimView.getHighScore();
         setContentView(snakeAnimView);
 
         i = new Intent(this, GameActivity.class);
@@ -110,7 +119,7 @@ public class MainActivity extends Activity {
                 paint.setTextSize(150);
                 canvas.drawText("Snake", 10, 150, paint);
                 paint.setTextSize(25);
-                canvas.drawText("  Hi Score:" + hi, 10, screenHeight-50, paint);
+                canvas.drawText("  Hi Score:" + currentHiScore, 10, screenHeight-50, paint);
 
                 //Draw the snake head
                 //make this Rect whatever size and location you like
@@ -122,6 +131,14 @@ public class MainActivity extends Activity {
                 ourHolder.unlockCanvasAndPost(canvas);
             }
 
+        }
+
+        public void getHighScore() {
+            preferences = getSharedPreferences(dataName, MODE_PRIVATE);
+            editor = preferences.edit();
+
+            // Load the high score
+            currentHiScore = preferences.getInt(stringHiScoreKey, defaultHiScore);
         }
 
         public void controlFPS() {

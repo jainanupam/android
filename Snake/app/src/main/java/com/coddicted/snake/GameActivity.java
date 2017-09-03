@@ -3,6 +3,7 @@ package com.coddicted.snake;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
@@ -34,6 +35,14 @@ public class GameActivity extends Activity {
     Bitmap tailBitmap;
     Bitmap appleBitmap;
 
+    // Variables for saving the High Score
+    SharedPreferences preferences;
+    SharedPreferences.Editor editor;
+    String dataName = "SnakeGameData";
+    String stringHiScoreKey = "SnakeHiScore";
+    int defaultHiScore = 0;
+    int currentHiScore = 0;
+
     //Sound
     //initialize sound variables
     private SoundPool soundPool;
@@ -55,7 +64,6 @@ public class GameActivity extends Activity {
     long lastFrameTime;
     int fps;
     int score;
-    int hi;
 
     //Game objects
     int [] snakeX;
@@ -99,6 +107,16 @@ public class GameActivity extends Activity {
             getSnake();
             //get an apple to munch
             getApple();
+            // get High score
+            getHighScore();
+        }
+
+        public void getHighScore() {
+            preferences = getSharedPreferences(dataName, MODE_PRIVATE);
+            editor = preferences.edit();
+
+            // Load the high score
+            currentHiScore = preferences.getInt(stringHiScoreKey, defaultHiScore);
         }
 
         public void getSnake(){
@@ -194,6 +212,12 @@ public class GameActivity extends Activity {
 
             }
 
+            if (score > currentHiScore){
+                currentHiScore = score;
+                editor.putInt(stringHiScoreKey, currentHiScore);
+                editor.commit();
+            }
+
         }
 
         public void drawGame() {
@@ -204,7 +228,7 @@ public class GameActivity extends Activity {
                 canvas.drawColor(Color.BLACK);//the background
                 paint.setColor(Color.argb(255, 255, 255, 255));
                 paint.setTextSize(topGap/2);
-                canvas.drawText("Score:" + score + "  Hi:" + hi, 10, topGap-6, paint);
+                canvas.drawText("Score:" + score + "  Hi:" + currentHiScore, 10, topGap-6, paint);
 
                 //draw a border - 4 lines, top right, bottom , left
                 paint.setStrokeWidth(3);//3 pixel border
