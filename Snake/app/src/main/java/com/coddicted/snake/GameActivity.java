@@ -30,9 +30,23 @@ public class GameActivity extends Activity {
     Canvas canvas;
     SnakeView snakeView;
 
-    Bitmap headBitmap;
-    Bitmap bodyBitmap;
-    Bitmap tailBitmap;
+    // Bitmaps for current view
+    Bitmap currentHeadBitmap;
+    Bitmap currentBodyBitmap;
+    Bitmap currentTailBitmap;
+
+    // Overall Bitmaps
+    Bitmap headRightBitmap;
+    Bitmap headLeftBitmap;
+    Bitmap headUpBitmap;
+    Bitmap headDownBitmap;
+    Bitmap bodyHorizontalBitmap;
+    Bitmap bodyVerticalBitmap;
+    Bitmap tailRightBitmap;
+    Bitmap tailLeftBitmap;
+    Bitmap tailUpBitmap;
+    Bitmap tailDownBitmap;
+
     Bitmap appleBitmap;
 
     // Variables for saving the High Score
@@ -68,6 +82,8 @@ public class GameActivity extends Activity {
     //Game objects
     int [] snakeX;
     int [] snakeY;
+    // to hold direction of each body part
+    int [] snakeDirections;
     int snakeLength;
     int appleX;
     int appleY;
@@ -102,6 +118,7 @@ public class GameActivity extends Activity {
             //get a snake this long
             snakeX = new int[200];
             snakeY = new int[200];
+            snakeDirections = new int[200];
 
             //our starting snake
             getSnake();
@@ -124,14 +141,17 @@ public class GameActivity extends Activity {
             //start snake head in the middle of screen
             snakeX[0] = numBlocksWide / 2;
             snakeY[0] = numBlocksHigh / 2;
+            snakeDirections[0] = directionOfTravel;
 
             //Then the body
             snakeX[1] = snakeX[0]-1;
             snakeY[1] = snakeY[0];
+            snakeDirections[1] = directionOfTravel;
 
             //And the tail
-            snakeX[1] = snakeX[1]-1;
-            snakeY[1] = snakeY[0];
+            snakeX[2] = snakeX[1]-1;
+            snakeY[2] = snakeY[1];
+            snakeDirections[2] = directionOfTravel;
         }
 
         public void getApple(){
@@ -168,6 +188,7 @@ public class GameActivity extends Activity {
             for(int i=snakeLength; i >0 ; i--){
                 snakeX[i] = snakeX[i-1];
                 snakeY[i] = snakeY[i-1];
+                snakeDirections[i] = snakeDirections[i-1];
             }
 
             //Move the head in the appropriate direction
@@ -244,13 +265,16 @@ public class GameActivity extends Activity {
                 canvas.drawLine(1,topGap, 1,topGap+(numBlocksHigh*blockSize), paint);
 
                 //Draw the snake
-                canvas.drawBitmap(headBitmap, snakeX[0]*blockSize, (snakeY[0]*blockSize)+topGap, paint);
+                determineHeadBitmap();
+                canvas.drawBitmap(currentHeadBitmap, snakeX[0]*blockSize, (snakeY[0]*blockSize)+topGap, paint);
                 //Draw the body
                 for(int i = 1; i < snakeLength-1;i++){
-                    canvas.drawBitmap(bodyBitmap, snakeX[i]*blockSize, (snakeY[i]*blockSize)+topGap, paint);
+                    determineBodyBitmap(i);
+                    canvas.drawBitmap(currentBodyBitmap, snakeX[i]*blockSize, (snakeY[i]*blockSize)+topGap, paint);
                 }
                 //draw the tail
-                canvas.drawBitmap(tailBitmap, snakeX[snakeLength-1]*blockSize, (snakeY[snakeLength-1]*blockSize)+topGap, paint);
+                determineTailBitmap();
+                canvas.drawBitmap(currentTailBitmap, snakeX[snakeLength-1]*blockSize, (snakeY[snakeLength-1]*blockSize)+topGap, paint);
 
                 //draw the apple
                 canvas.drawBitmap(appleBitmap, appleX*blockSize, (appleY*blockSize)+topGap, paint);
@@ -260,9 +284,63 @@ public class GameActivity extends Activity {
 
         }
 
+        private void determineTailBitmap() {
+            // Determine the current Tail bitmap to be drawn based on
+            // direction of travel
+            switch (snakeDirections[snakeLength]){
+                case 0://up
+                    currentTailBitmap = tailUpBitmap;
+                    break;
+                case 1://right
+                    currentTailBitmap  = tailRightBitmap;
+                    break;
+                case 2://down
+                    currentTailBitmap  = tailDownBitmap;
+                    break;
+                case 3://left
+                    currentTailBitmap  = tailLeftBitmap;
+                    break;
+            }
+        }
+
+        private void determineHeadBitmap() {
+            // Determine the current Head bitmap to be drawn based on
+            // direction of travel
+            switch (directionOfTravel){
+                case 0://up
+                    currentHeadBitmap = headUpBitmap;
+                    break;
+                case 1://right
+                    currentHeadBitmap = headRightBitmap;
+                    break;
+                case 2://down
+                    currentHeadBitmap = headDownBitmap;
+                    break;
+                case 3://left
+                    currentHeadBitmap = headLeftBitmap;
+                    break;
+            }
+        }
+
+        private void determineBodyBitmap(int i) {
+            // Determine the current body bitmap to be drawn based on
+            // direction of travel
+            switch (snakeDirections[i]){
+                case 0://up
+                case 2://down
+                    currentBodyBitmap = bodyVerticalBitmap;
+                    break;
+
+                case 1://right
+                case 3://left
+                    currentBodyBitmap = bodyHorizontalBitmap;
+                    break;
+            }
+        }
+
         public void controlFPS() {
             long timeThisFrame = (System.currentTimeMillis() - lastFrameTime);
-            long timeToSleep = 150 - timeThisFrame;
+            long timeToSleep = 250 - timeThisFrame;
             if (timeThisFrame > 0) {
                 fps = (int) (1000 / timeThisFrame);
             }
@@ -302,7 +380,6 @@ public class GameActivity extends Activity {
                         //turn right
                         directionOfTravel ++;
                         //no such direction
-
                         if(directionOfTravel == 4)
                             //loop back to 0(up)
                             directionOfTravel = 0;
@@ -311,11 +388,13 @@ public class GameActivity extends Activity {
                         //turn left
                         directionOfTravel--;
                         if(directionOfTravel == -1) {//no such direction
-                            //loop back to 0(up)
+                            //loop back to 3(left)
                             directionOfTravel = 3;
                         }
                     }
             }
+            // Change snake direction for rest of body
+            snakeDirections[0] = directionOfTravel;
             return true;
         }
 
@@ -349,8 +428,6 @@ public class GameActivity extends Activity {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
 
             snakeView.pause();
-
-
 
             Intent i = new Intent(this, MainActivity.class);
             startActivity(i);
@@ -409,16 +486,38 @@ public class GameActivity extends Activity {
         numBlocksHigh = ((screenHeight - topGap - numBlocksWide ))/blockSize;
         Log.i("INFO", "numBlockHigh " + numBlocksHigh);
 
-        //Load and scale bitmaps
-        headBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.head);
-        bodyBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.body);
-        tailBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.tail);
+        /* Load the bitmaps */
+        // head
+        headRightBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.head_right);
+        headLeftBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.head_left);
+        headUpBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.head_up);
+        headDownBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.head_down);
+        // body
+        bodyHorizontalBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.body_horizontal);
+        bodyVerticalBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.body_vertical);
+        // tail
+        tailRightBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.tail_right);
+        tailLeftBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.tail_left);
+        tailUpBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.tail_up);
+        tailDownBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.tail_down);
+        // apple
         appleBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.apple);
 
-        //scale the bitmaps to match the block size
-        headBitmap = Bitmap.createScaledBitmap(headBitmap, blockSize, blockSize, false);
-        bodyBitmap = Bitmap.createScaledBitmap(bodyBitmap, blockSize, blockSize, false);
-        tailBitmap = Bitmap.createScaledBitmap(tailBitmap, blockSize, blockSize, false);
+        /* scale the bitmaps to match the block size */
+        // head
+        headRightBitmap = Bitmap.createScaledBitmap(headRightBitmap, blockSize, blockSize, false);
+        headLeftBitmap = Bitmap.createScaledBitmap(headLeftBitmap, blockSize, blockSize, false);
+        headUpBitmap = Bitmap.createScaledBitmap(headUpBitmap, blockSize, blockSize, false);
+        headDownBitmap = Bitmap.createScaledBitmap(headDownBitmap, blockSize, blockSize, false);
+        // body
+        bodyHorizontalBitmap = Bitmap.createScaledBitmap(bodyHorizontalBitmap, blockSize, blockSize, false);
+        bodyVerticalBitmap = Bitmap.createScaledBitmap(bodyVerticalBitmap, blockSize, blockSize, false);
+        // tail
+        tailRightBitmap = Bitmap.createScaledBitmap(tailRightBitmap, blockSize, blockSize, false);
+        tailLeftBitmap = Bitmap.createScaledBitmap(tailLeftBitmap, blockSize, blockSize, false);
+        tailUpBitmap = Bitmap.createScaledBitmap(tailUpBitmap, blockSize, blockSize, false);
+        tailDownBitmap = Bitmap.createScaledBitmap(tailDownBitmap, blockSize, blockSize, false);
+        // apple
         appleBitmap = Bitmap.createScaledBitmap(appleBitmap, blockSize, blockSize, false);
 
     }
