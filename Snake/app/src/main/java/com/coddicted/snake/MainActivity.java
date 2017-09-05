@@ -173,12 +173,12 @@ public class MainActivity extends Activity {
             ourThread = new Thread(this);
             ourThread.start();
         }
-    }
 
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        startActivity(i);
-        return true;
+        @Override
+        public boolean onTouchEvent(MotionEvent event) {
+            startActivity(i);
+            return true;
+        }
     }
 
     @Override
