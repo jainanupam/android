@@ -27,6 +27,7 @@ import java.util.Random;
 
 public class GameActivity extends Activity {
 
+    private static String TAG = "GameActivity";
     Canvas canvas;
     SnakeView snakeView;
 
@@ -46,6 +47,10 @@ public class GameActivity extends Activity {
     Bitmap tailLeftBitmap;
     Bitmap tailUpBitmap;
     Bitmap tailDownBitmap;
+    Bitmap bodyCorner1Bitmap;
+    Bitmap bodyCorner2Bitmap;
+    Bitmap bodyCorner3Bitmap;
+    Bitmap bodyCorner4Bitmap;
 
     Bitmap appleBitmap;
 
@@ -66,6 +71,7 @@ public class GameActivity extends Activity {
     int sample4 = -1;
 
     //for snake movement
+    int previousDirection=0;
     int directionOfTravel=0;
     //0 = up, 1 = right, 2 = down, 3= left
 
@@ -325,22 +331,74 @@ public class GameActivity extends Activity {
         private void determineBodyBitmap(int i) {
             // Determine the current body bitmap to be drawn based on
             // direction of travel
-            switch (snakeDirections[i]){
-                case 0://up
-                case 2://down
-                    currentBodyBitmap = bodyVerticalBitmap;
+            if(i < snakeLength && snakeDirections[i] != snakeDirections[i+1]) {
+                currentBodyBitmap = getCornerBodyBitmap(i);
+            } else {
+                switch (snakeDirections[i]){
+                    case 0://up
+                    case 2://down
+                        currentBodyBitmap = bodyVerticalBitmap;
+                        break;
+
+                    case 1://right
+                    case 3://left
+                        currentBodyBitmap = bodyHorizontalBitmap;
+                        break;
+                }
+            }
+        }
+
+        private Bitmap getCornerBodyBitmap(int i) {
+            Bitmap cornerBitmap = null;
+            Log.i(TAG, "i: " + i + " snakeDirection[i]:" + snakeDirections[i] +
+                    " snakeDirections[i+1]" + snakeDirections[i+1]);
+            int ix = i + 1;
+
+            switch (snakeDirections[i]) {
+                case 0: // current direction is up
+                    if(snakeDirections[ix] == 1) {
+                        // previous direction was right
+                        cornerBitmap = bodyCorner1Bitmap;
+                    } else if(snakeDirections[ix] == 3) {
+                        // previous direction was left
+                        cornerBitmap = bodyCorner3Bitmap;
+                    }
+                    break;
+                case 1: // current direction is right
+                    if(snakeDirections[ix] == 0) {
+                        // previous direction was up
+                        cornerBitmap = bodyCorner4Bitmap;
+                    } else if(snakeDirections[ix] == 2) {
+                        // previous direction was down
+                        cornerBitmap = bodyCorner3Bitmap;
+                    }
+                    break;
+                case 2: // current direction is down
+                    if(snakeDirections[ix] == 1) {
+                        // previous direction was right
+                        cornerBitmap = bodyCorner2Bitmap;
+                    } else if(snakeDirections[ix] == 3) {
+                        // previous direction was left
+                        cornerBitmap = bodyCorner4Bitmap;
+                    }
+                    break;
+                case 3: // current direction is left
+                    if(snakeDirections[ix] == 0) {
+                        // previous direction was up
+                        cornerBitmap = bodyCorner2Bitmap;
+                    } else if(snakeDirections[ix] == 2) {
+                        // previous direction was down
+                        cornerBitmap = bodyCorner1Bitmap;
+                    }
                     break;
 
-                case 1://right
-                case 3://left
-                    currentBodyBitmap = bodyHorizontalBitmap;
-                    break;
             }
+            return cornerBitmap;
         }
 
         public void controlFPS() {
             long timeThisFrame = (System.currentTimeMillis() - lastFrameTime);
-            long timeToSleep = 250 - timeThisFrame;
+            long timeToSleep = 500 - timeThisFrame;
             if (timeThisFrame > 0) {
                 fps = (int) (1000 / timeThisFrame);
             }
@@ -376,6 +434,7 @@ public class GameActivity extends Activity {
 
             switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
                 case MotionEvent.ACTION_UP:
+                    previousDirection = directionOfTravel;
                     if (motionEvent.getX() >= screenWidth / 2) {
                         //turn right
                         directionOfTravel ++;
@@ -495,6 +554,10 @@ public class GameActivity extends Activity {
         // body
         bodyHorizontalBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.body_horizontal);
         bodyVerticalBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.body_vertical);
+        bodyCorner1Bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.body_corner1);
+        bodyCorner2Bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.body_corner2);
+        bodyCorner3Bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.body_corner3);
+        bodyCorner4Bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.body_corner4);
         // tail
         tailRightBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.tail_right);
         tailLeftBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.tail_left);
@@ -512,6 +575,11 @@ public class GameActivity extends Activity {
         // body
         bodyHorizontalBitmap = Bitmap.createScaledBitmap(bodyHorizontalBitmap, blockSize, blockSize, false);
         bodyVerticalBitmap = Bitmap.createScaledBitmap(bodyVerticalBitmap, blockSize, blockSize, false);
+        bodyCorner1Bitmap = Bitmap.createScaledBitmap(bodyCorner1Bitmap, blockSize, blockSize, false);
+        bodyCorner2Bitmap = Bitmap.createScaledBitmap(bodyCorner2Bitmap, blockSize, blockSize, false);
+        bodyCorner3Bitmap = Bitmap.createScaledBitmap(bodyCorner3Bitmap, blockSize, blockSize, false);
+        bodyCorner4Bitmap = Bitmap.createScaledBitmap(bodyCorner4Bitmap, blockSize, blockSize, false);
+
         // tail
         tailRightBitmap = Bitmap.createScaledBitmap(tailRightBitmap, blockSize, blockSize, false);
         tailLeftBitmap = Bitmap.createScaledBitmap(tailLeftBitmap, blockSize, blockSize, false);
